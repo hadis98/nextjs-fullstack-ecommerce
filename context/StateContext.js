@@ -10,6 +10,10 @@ export const StateContext = ({ children }) => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalQuantities, setTotalQuantities] = useState(0);
   const [qty, setQty] = useState(1);
+
+  let foundProduct; //product we want to update
+  let foundProductIndex;
+
   const onAddProduct = (product, quantity) => {
     console.log(cartItems);
     console.log(product, quantity);
@@ -48,6 +52,48 @@ export const StateContext = ({ children }) => {
     });
   };
 
+  const toggleCartItemQty = (id, value) => {
+    foundProduct = cartItems.find((item) => item._id === id);
+    foundProductIndex = cartItems.findIndex((item) => item._id === id);
+    // are we incrementing or decrementing?
+    // !!splice will mutate state(update it) =>> we should not use it
+    //const newCartItems = cartItems.splice(foundProductIndex, 1);
+    const newCartItems = cartItems.filter((item) => item._id !== id);
+    if (value === "inc") {
+      // !this is forbiden to mutate state in react =>>never update state with equal sign!
+      // *we use setter functions to update them
+      //cartItems[foundProductIndex] = foundProduct;
+      setCartItems([
+        ...newCartItems,
+        { ...foundProduct, quantity: foundProduct.quantity + 1 },
+      ]);
+      setTotalPrice((prevTotalPrice) => prevTotalPrice + foundProduct.price);
+      setTotalQuantities((prevTotalQuantites) => prevTotalQuantites + 1);
+    } else if (value === "dec") {
+      if (foundProduct.quantity > 1) {
+        setCartItems([
+          ...newCartItems,
+          { ...foundProduct, quantity: foundProduct.quantity - 1 },
+        ]);
+        setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct.price);
+        setTotalQuantities((prevTotalQuantites) => prevTotalQuantites - 1);
+      }
+    }
+  };
+
+  const onRemoveCartItem = (product) => {
+    foundProduct = cartItems.find((item) => item._id === product._id);
+    const newCartItems = cartItems.filter((item) => item._id !== product._id);
+    setTotalPrice(
+      (prevTotalPrice) =>
+        prevTotalPrice - foundProduct.price * foundProduct.quantity
+    );
+    setTotalQuantities(
+      (prevTotalQuantites) => prevTotalQuantites - foundProduct.quantity
+    );
+    setCartItems(newCartItems);
+  };
+
   return (
     <Context.Provider
       value={{
@@ -59,6 +105,9 @@ export const StateContext = ({ children }) => {
         increaseQty,
         decreaseQty,
         onAddProduct,
+        setShowCart,
+        toggleCartItemQty,
+        onRemoveCartItem,
       }}
     >
       {children}
