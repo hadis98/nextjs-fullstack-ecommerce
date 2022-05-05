@@ -13,7 +13,12 @@ import { client, urlFor } from "../../lib/client";
 const ProductDetails = ({ product, products }) => {
   const { image, name, details, price } = product;
   const [index, setIndex] = useState(0);
-  const { increaseQty, decreaseQty, qty, onAddProduct } = useStateContext();
+  const { increaseQty, decreaseQty, qty, onAddProduct,setShowCart } = useStateContext();
+
+  const handleBuyNow = ()=>{
+    onAddProduct(product,qty);
+    setShowCart(true);
+  }
   return (
     <div>
       <div className="product-detail-container">
@@ -59,7 +64,7 @@ const ProductDetails = ({ product, products }) => {
               <span className="minus" onClick={decreaseQty}>
                 <AiOutlineMinus />
               </span>
-              <span className="num" onClick="">
+              <span className="num">
                 {qty}
               </span>
               <span className="plus" onClick={increaseQty}>
@@ -75,7 +80,7 @@ const ProductDetails = ({ product, products }) => {
             >
               Add to Cart
             </button>
-            <button type="button" className="buy-now">
+            <button type="button" className="buy-now" onClick={handleBuyNow}>
               Buy Now
             </button>
           </div>
