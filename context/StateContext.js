@@ -15,8 +15,6 @@ export const StateContext = ({ children }) => {
   let foundProductIndex;
 
   const onAddProduct = (product, quantity) => {
-    console.log(cartItems);
-    console.log(product, quantity);
     const checkProductInCart = cartItems.find(
       (item) => item._id === product._id
     );
@@ -25,8 +23,7 @@ export const StateContext = ({ children }) => {
     );
     setTotalQuantities((prevTotalQuantites) => prevTotalQuantites + quantity);
     if (checkProductInCart) {
-      const updatedCartItems = cartItems.map((cartProduct) => {
-        console.log(cartProduct);
+      const updatedCartItems = cartItems.map((cartProduct) => {        
         if (cartProduct._id === product._id) {
           return {
             ...cartProduct,
@@ -34,8 +31,7 @@ export const StateContext = ({ children }) => {
           };
         }
       });
-      setCartItems(updatedCartItems);
-      console.log(checkProductInCart);
+      setCartItems(updatedCartItems);     
     } else {
       product.quantity = quantity;
       setCartItems([...cartItems, { ...product }]);
@@ -108,6 +104,9 @@ export const StateContext = ({ children }) => {
         setShowCart,
         toggleCartItemQty,
         onRemoveCartItem,
+        setCartItems,
+        setTotalPrice,
+        setTotalQuantities,
       }}
     >
       {children}
